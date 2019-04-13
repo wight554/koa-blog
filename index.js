@@ -8,15 +8,21 @@ const path = require('path');
 const mongo = require('./utils/mongo'),
   Post = mongo.Post,
   User = mongo.User,
-  ObjectId = mongo.ObjectId;
+  ObjectId = mongo.ObjectId,
+  mongoUrl = process.env.MONGODB_URI || 'mongodb://localhost:27017/blog'
 
 // trust proxy
 app.proxy = true
 
 // sessions
-const session = require('koa-session')
-app.keys = ['your-session-secret']
-app.use(session({}, app))
+const session = require('koa-session-minimal');
+
+// fixme
+//const session = require('koa-generic-session');
+
+const MongoStore = require('koa-generic-session-mongo');
+app.keys = ['smth']
+app.use(session({ store: new MongoStore({url: mongoUrl}) }));
 
 // body parser
 const bodyParser = require('koa-bodyparser')
